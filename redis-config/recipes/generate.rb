@@ -1,11 +1,10 @@
 # Based on:
-# https://aws.amazon.com/blogs/aws/using-aws-elasticache-for-redis-
-# with-aws-opsworks/
+# http://docs.aws.amazon.com/opsworks/latest/userguide/other-services-redis.html
 node[:deploy].each do |application, deploy|
-  approot = "#{deploy[:deploy_to]}/current"
+  app_root = "#{deploy[:deploy_to]}/current"
 
   # Use template redis.yml.erb to generate 'config/redis.yml'
-  template "#{approot}/config/redis.yml" do
+  template "#{app_root}/config/redis.yml" do
     source "redis.yml.erb"
 
     mode "0660"
