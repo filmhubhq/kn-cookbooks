@@ -1,7 +1,7 @@
 # Configure god process monitoring for Resque
 # Based on Resque's examples/god/resque.god
-rails_env  = "<%= @env %>" || "production"
-rails_root = "<%= @app_root %>"
+rails_env  = "<%= @params[:env] %>" || "production"
+rails_root = "<%= @params[:app_root] %>"
 
 num_workers = rails_env == 'production' ? 3 : 2
 
@@ -14,13 +14,13 @@ num_workers.times do |num|
     w.env      = {"QUEUE"=>"critical,high,low", "RAILS_ENV"=>rails_env}
     w.start    = "/usr/bin/rake -f #{rails_root}/Rakefile environment resque:work"
 
-    w.uid = '<%= @uid %>'
-    w.gid = '<%= @gid %>'
+    w.uid = '<%= @params[:uid] %>'
+    w.gid = '<%= @params[:gid] %>'
 
     # restart if memory gets too high
     w.transition(:up, :restart) do |on|
       on.condition(:memory_usage) do |c|
-        c.above = <%= @max_memory %>.megabytes
+        c.above = <%= @params[:max_memory] %>.megabytes
         c.times = 2
       end
     end
