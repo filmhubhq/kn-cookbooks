@@ -1,21 +1,27 @@
-# Configure god process monitoring for Resque
-# Based on Resque's examples/god/resque.god
-rails_env  = "<%= @params[:env] %>" || "production"
+# Configure god process monitoring for Sidekiq.
+
+rails_env  = "<%= @params[:env] %>" || "development"
 rails_root = "<%= @params[:app_root] %>"
 
-num_workers = rails_env == 'production' ? 3 : 2
+# num_workers = rails_env == 'production' ? 3 : 2
+num_workers = 1
 
 num_workers.times do |num|
   God.watch do |w|
     w.dir      = "#{rails_root}"
-    w.name     = "resque-#{num}"
-    w.group    = 'resque'
+    w.name     = "sidekiq-#{num}"
+    w.group    = 'sidekiq'
     w.interval = 30.seconds
-    w.env      = {"QUEUE"=>"critical,high,low", "RAILS_ENV"=>rails_env}
-    w.start    = "/usr/bin/rake -f #{rails_root}/Rakefile environment resque:work"
+    w.env      = {"RAILS_ENV" => rails_env}
+    w.pid_file = "#{rails_root}/tmp/pids/#{w.name}.pid"
+    w.start    = "bundle exec sidekiq -C #{rails_root}/config/sidekiq.yml"
+    w.stop     = "sidekiqctl stop #{w.pid_file} 60"
+    w.uid      = '<%= @params[:uid] %>'
+    w.gid      = '<%= @params[:gid] %>'
+    w.keepalive
 
-    w.uid = '<%= @params[:uid] %>'
-    w.gid = '<%= @params[:gid] %>'
+    # clean pid files before start if necessary
+    w.behavior(:clean_pid_file)
 
     # restart if memory gets too high
     w.transition(:up, :restart) do |on|
