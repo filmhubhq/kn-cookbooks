@@ -45,7 +45,7 @@ instance $index
 
 script
 exec /bin/bash <<'EOT'
-  cd <%= "#{deploy[:deploy_to]}/current" %>
+  cd <%= "#{@deploy[:deploy_to]}/current" %>
   exec bundle exec sidekiq -i ${index} -e production
 EOT
 end script
