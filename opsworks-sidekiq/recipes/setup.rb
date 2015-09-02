@@ -1,5 +1,6 @@
 node[:deploy].each do |application, deploy|
-  app_root = "#{deploy[:deploy_to]}/current"
+
+  Chef::Log.info("Configuring Sidekiq for application #{application}")
 
   template '/etc/init/sidekiq.conf' do
     source 'sidekiq.conf.erb'
@@ -10,18 +11,8 @@ node[:deploy].each do |application, deploy|
     variables(
       user: deploy[:user],
       group: deploy[:group],
-      app_root: app_root,
+      app_root: "#{deploy[:deploy_to]}/current",
       environment: OpsWorks::Escape.escape_double_quotes(deploy[:environment_variables])
     )
-  end
-
-  service 'sidekiq' do
-    provider Chef::Provider::Service::Upstart
-    supports :status => true, :start => true, :stop => true, :restart => true
-  end
-
-  bash 'restart_sidekiq' do
-    code 'echo noop'
-    notifies :restart, 'service[sidekiq]'
   end
 end
