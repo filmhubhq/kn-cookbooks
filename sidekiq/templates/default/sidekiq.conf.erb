@@ -24,10 +24,14 @@ normal exit 0 TERM
 # this commented out.
 reload signal USR1
 
+<% @environment.each do |key, value| %>
+ENV['<%= key %>'] = "<%= value %>"
+<% end %>
+
+chdir <%= @app_root %>
+
 # Logs out to /var/log/upstart/sidekiq.log by default
+
 script
-exec /bin/bash <<'EOT'
-  cd <%= @app_root %>
-  exec bin/sidekiq -e production
-EOT
+  exec bundle exec sidekiq -e production
 end script

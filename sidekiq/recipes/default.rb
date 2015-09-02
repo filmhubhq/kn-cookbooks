@@ -10,7 +10,8 @@ node[:deploy].each do |application, deploy|
     variables(
       user: deploy[:user],
       group: deploy[:group],
-      app_root: app_root
+      app_root: app_root,
+      environment: OpsWorks::Escape.escape_double_quotes(deploy[:environment_variables])
     )
   end
 
