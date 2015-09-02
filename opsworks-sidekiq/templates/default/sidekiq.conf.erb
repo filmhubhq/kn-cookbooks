@@ -1,17 +1,34 @@
-# /etc/init/sidekiq.conf - Sidekiq Upstart config
+# /etc/init/sidekiq.conf - Sidekiq config
 
-# Based on:
-# https://github.com/mperham/sidekiq/wiki/Deploying-to-Ubuntu
-# https://github.com/mperham/sidekiq/tree/master/examples/upstart
+# This example config should work with Ubuntu 12.04+.  It
+# allows you to manage multiple Sidekiq instances with
+# Upstart, Ubuntu's native service management tool.
+#
+# See workers.conf for how to manage all Sidekiq instances at once.
+#
+# Save this config as /etc/init/sidekiq.conf then manage sidekiq with:
+#   sudo start sidekiq index=0
+#   sudo stop sidekiq index=0
+#   sudo status sidekiq index=0
+#
+# Hack Upstart's reload command to 'quiet' Sidekiq:
+#
+#   sudo reload sidekiq index=0
+#
+# or use the service command:
+#   sudo service sidekiq {start,stop,restart,status}
+#
+# This script is not meant to start on bootup, workers.conf
+# will start all sidekiq instances explicitly when it starts.
+#
+# Logs out to /var/log/upstart/sidekiq.log by default
+#
 
 description "Sidekiq Background Worker"
 
-# This starts upon bootup and stops on shutdown
-start on runlevel [2345]
-stop on runlevel [06]
-
-setuid <%= @user %>
-setgid <%= @group %>
+# Deployment user
+# setuid <%= @deploy[:user] %>
+# setgid <%= @deploy[:group] %>
 
 respawn
 respawn limit 3 30
@@ -24,14 +41,11 @@ normal exit 0 TERM
 # this commented out.
 reload signal USR1
 
-<% @environment.each do |key, value| %>
-ENV['<%= key %>'] = "<%= value %>"
-<% end %>
-
-chdir <%= @app_root %>
-
-# Logs out to /var/log/upstart/sidekiq.log by default
+instance $index
 
 script
-  exec bundle exec sidekiq -e production
+exec /bin/bash <<'EOT'
+  cd <%= "#{deploy[:deploy_to]}/current" %>
+  exec bundle exec sidekiq -i ${index} -e production
+EOT
 end script
