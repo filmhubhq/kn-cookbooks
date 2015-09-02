@@ -1,6 +1,6 @@
 node[:deploy].each do |application, deploy|
 
-  Chef::Log.info("Configuring Sidekiq for application #{application}")
+  Chef::Log.info("Setting up Sidekiq workers for #{application}")
 
   template '/etc/init/workers.conf' do
     source 'workers.conf.erb'
