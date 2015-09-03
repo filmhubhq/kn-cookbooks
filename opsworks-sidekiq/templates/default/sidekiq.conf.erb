@@ -29,6 +29,10 @@
 
 description "Sidekiq Background Worker"
 
+# Run the process as the deploy user.
+setuid <%= @deploy[:user] %>
+setgid <%= @deploy[:group] %>
+
 respawn
 respawn limit 3 30
 
