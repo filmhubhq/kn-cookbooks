@@ -43,8 +43,10 @@ reload signal USR1
 
 instance $index
 
-# Temp
-env REDIS_URL="redis://kn-redis.unxw12.0001.use1.cache.amazonaws.com:6379/1"
+# Include OpsWorks environment variables.
+<% @env.each do |key, value| %>
+env <%= key %>=<%= (value || '').to_s.gsub('"', '\\"') %>
+<% end %>
 
 script
 exec /bin/bash <<'EOT'

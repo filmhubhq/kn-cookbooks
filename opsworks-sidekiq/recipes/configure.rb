@@ -15,12 +15,14 @@ node[:deploy].each do |application, deploy|
     owner  'root'
     group  'root'
     variables(
-      deploy: deploy
+      deploy: deploy,
+      env: deploy[:environment_variables]
     )
   end
 
   service 'workers' do
     provider Chef::Provider::Service::Upstart
     supports :status => true, :restart => true, :reload => true
+    action :enable
   end
 end
