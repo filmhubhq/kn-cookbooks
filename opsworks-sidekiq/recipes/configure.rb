@@ -2,8 +2,8 @@ node[:deploy].each do |application, deploy|
 
   Chef::Log.info("Setting up Sidekiq workers for #{application}")
 
-  template '/etc/init/workers.conf' do
-    source 'workers.conf.erb'
+  template '/etc/init/sidekiq_workers.conf' do
+    source 'sidekiq_workers.conf.erb'
     mode   '0644'
     owner  'root'
     group  'root'
@@ -20,7 +20,7 @@ node[:deploy].each do |application, deploy|
     )
   end
 
-  service 'workers' do
+  service 'sidekiq_workers' do
     provider Chef::Provider::Service::Upstart
     supports :status => true, :restart => true, :reload => true
     action :enable

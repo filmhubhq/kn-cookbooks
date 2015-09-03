@@ -1,20 +1,19 @@
-# /etc/init/workers.conf - manage a set of Sidekiqs
+# /etc/init/sidekiq_workers.conf - manage a set of Sidekiqs
 
 # Based on:
-# https://github.com/mperham/sidekiq/wiki/Deploying-to-Ubuntu
 # https://github.com/mperham/sidekiq/tree/master/examples/upstart
-
-# This example config should work with Ubuntu 12.04+.  It
-# allows you to manage multiple Sidekiq instances with
+#
+# This example config should work with Ubuntu 12.04+.
+# It allows you to manage multiple Sidekiq instances with
 # Upstart, Ubuntu's native service management tool.
 #
 # See sidekiq.conf for how to manage a single Sidekiq instance.
 #
-# Use "stop workers" to stop all Sidekiq instances.
-# Use "start workers" to start all instances.
-# Use "restart workers" to restart all instances.
+# Use "stop sidekiq_workers" to stop all Sidekiq instances.
+# Use "start sidekiq_workers" to start all instances.
+# Use "restart sidekiq_workers" to restart all instances.
 #
-# Logs to /var/log/upstart/workers.log
+# Logs to /var/log/upstart/sidekiq_workers.log
 #
 
 description "Manages a set of Sidekiq processes"

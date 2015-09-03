@@ -1,10 +1,13 @@
 # /etc/init/sidekiq.conf - Sidekiq config
 
-# This example config should work with Ubuntu 12.04+.  It
-# allows you to manage multiple Sidekiq instances with
+# Based on:
+# https://github.com/mperham/sidekiq/tree/master/examples/upstart
+#
+# This example config should work with Ubuntu 12.04+.
+# It allows you to manage multiple Sidekiq instances with
 # Upstart, Ubuntu's native service management tool.
 #
-# See workers.conf for how to manage all Sidekiq instances at once.
+# See sidekiq_workers.conf for how to manage all Sidekiq instances at once.
 #
 # Save this config as /etc/init/sidekiq.conf then manage sidekiq with:
 #   sudo start sidekiq index=0
@@ -18,17 +21,13 @@
 # or use the service command:
 #   sudo service sidekiq {start,stop,restart,status}
 #
-# This script is not meant to start on bootup, workers.conf
+# This script is not meant to start on bootup, sidekiq_workers.conf
 # will start all sidekiq instances explicitly when it starts.
 #
 # Logs to /var/log/upstart/sidekiq-$index.log
 #
 
 description "Sidekiq Background Worker"
-
-# Deployment user
-# setuid <%= @deploy[:user] %>
-# setgid <%= @deploy[:group] %>
 
 respawn
 respawn limit 3 30
